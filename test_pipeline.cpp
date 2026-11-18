@@ -7,6 +7,7 @@
 #include <new>
 #include <thread>
 #include <vector>
+#include <optional>
 
 // --- Heap Allocation Trap ---
 static std::atomic<bool> g_forbid_heap{false};
