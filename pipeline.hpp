@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <semaphore>
 #include <cstddef>
+#include <optional>
 
 // 64-byte aligned payload for NPU DMA compatibility
 struct alignas(64) ManifoldFrame {
