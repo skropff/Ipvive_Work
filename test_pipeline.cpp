@@ -80,7 +80,9 @@ void test_single_frame_handoff() {
     g_hw.reset(&pipe, false);
 
     uint8_t dummy_spi[4] = {42, 0, 0, 0};
+    printf("A\n");
     pipe.on_spi_dma_complete_isr(dummy_spi, 1000);
+    printf("B\n");
     assert(g_hw.projection_calls == 1);
 
     pipe.process_and_dispatch_to_npu();
