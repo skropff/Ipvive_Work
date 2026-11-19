@@ -46,14 +46,14 @@ public:
     SensorNpuPipeline() {
         // TODO: Initialize semaphores and state
 		for (int i = 0; i < Capacity; i = i + 1) {
-			spi_sem.emplace(1);
+			spi_sem[i].emplace(1);
 		}
 		
 		for (int i = 0; i < Capacity; i = i + 1) {
-			npu_sem.emplace(0);
+			npu_sem[i].emplace(0);
 		}
 		
-		extra_npu_sem.emplace(0);
+		extra_npu_sem[0].emplace(0);
 		
 		/*
 		for (int i = 0; i < Capacity; i = i + 1) {
