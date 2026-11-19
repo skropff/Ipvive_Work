@@ -73,7 +73,7 @@ public:
 		
 		for (int i = 0; i < Capacity; i = i + 1) {
 			//Try to acquire next SPI sempahore. 
-			if (spi_sem[i].try_acquire()) {
+			if (spi_sem[i]->try_acquire()) {
 				match = i;
 				success = true;
 				break;
@@ -95,13 +95,14 @@ public:
 		int starting = 0;
 		int index;
 		while (true) {
-			extra_npu_sem[0].acquire();
+			extra_npu_sem[0]->acquire();
 			
 			for (int i = 0; i < Capacity; i = i + 1) {
 				index = (i + starting) % Capacity;
-				if (npu_sem[index].try_acquire()) {
+				if (npu_sem[index]->try_acquire()) {
 					starting = i + 1;
 					npu_submit_dma_descriptor(buffer_pool_ + index);
+					spi_sem[index].release();
 					break;
 				}
 			}
