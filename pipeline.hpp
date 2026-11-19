@@ -92,11 +92,13 @@ public:
     // and manages buffer lifecycle.
     void process_and_dispatch_to_npu() noexcept {
         // TODO: Wait on ready semaphore, dispatch pointer to NPU, and handle slot release.
+
+		printf("starting\n");
 		int starting = 0;
 		int index;
 		while (true) {
 			extra_npu_sem[0]->acquire();
-			
+			printf("extra npu sem acquired\n");
 			for (int i = 0; i < Capacity; i = i + 1) {
 				index = (i + starting) % Capacity;
 				if (npu_sem[index]->try_acquire()) {
@@ -107,7 +109,7 @@ public:
 				}
 			}
 			
-	
+		
 			
 			
 			
