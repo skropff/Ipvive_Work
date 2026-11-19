@@ -86,6 +86,7 @@ void test_single_frame_handoff() {
     assert(g_hw.projection_calls == 1);
 
     pipe.process_and_dispatch_to_npu();
+    printf("C\n");
     assert(g_hw.dma_submits == 1);
     assert(g_hw.last_submitted_ts == 1000);
     assert(g_hw.last_submitted_coord0 == 42.0f);
