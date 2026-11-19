@@ -84,7 +84,7 @@ void test_single_frame_handoff() {
     pipe.on_spi_dma_complete_isr(dummy_spi, 1000);
     printf("B\n");
     assert(g_hw.projection_calls == 1);
-
+    printf("hello\n");
     pipe.process_and_dispatch_to_npu();
     printf("C\n");
     assert(g_hw.dma_submits == 1);
