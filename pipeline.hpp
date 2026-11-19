@@ -82,8 +82,8 @@ public:
 		
 		if (success) {
 			project_spi_to_hyperbolic(raw_spi_data, &buffer_pool_[match]);
-			npu_sem[match].release();
-			extra_npu_sem[0].release();
+			npu_sem[match]->release();
+			extra_npu_sem[0]->release();
 		}
     }
 
@@ -102,7 +102,7 @@ public:
 				if (npu_sem[index]->try_acquire()) {
 					starting = i + 1;
 					npu_submit_dma_descriptor(&buffer_pool_[index]);
-					spi_sem[index].release();
+					spi_sem[index]->release();
 					break;
 				}
 			}
