@@ -35,7 +35,10 @@ private:
 	// Declares Capacity empty slots without constructing any semaphores
 	std::array<std::optional<std::binary_semaphore>, Capacity> npu_sem;
 	
-	std::array<std::optional<std::counting_semaphore<Capacity>> extra_npu_sem;
+	//std::array<std::optional<std::counting_semaphore<Capacity>> extra_npu_sem;
+
+	std::array<std::optional<std::counting_semaphore<Capacity>>, 1> extra_npu_sem;
+
 	
 	//std::array<std::optional<std::binary_semaphore>, Capacity> final_sem;
 
