@@ -82,6 +82,7 @@ public:
 		
 		if (success) {
 			project_spi_to_hyperbolic(raw_spi_data, &buffer_pool_[match]);
+			(&buffer_pool_[match])->timestamp_ns = timestamp;
 			npu_sem[match]->release();
 			extra_npu_sem[0]->release();
 		}
