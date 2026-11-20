@@ -96,8 +96,7 @@ public:
 		printf("starting\n");
 		int starting = 0;
 		int index;
-		while (true) {
-			extra_npu_sem[0]->acquire();
+		while (extra_npu_sem[0]->try_acquire()) {
 			printf("extra npu sem acquired\n");
 			for (int i = 0; i < Capacity; i = i + 1) {
 				printf("inner loop\n");
