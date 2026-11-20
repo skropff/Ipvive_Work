@@ -70,7 +70,7 @@ public:
         // buffer_pool_, and signal the worker/NPU thread.
 		bool success = false;
 		int match;
-		printf("x1");
+		printf("x1\n");
 		for (int i = 0; i < Capacity; i = i + 1) {
 			//Try to acquire next SPI sempahore. 
 			if (spi_sem[i]->try_acquire()) {
@@ -100,6 +100,7 @@ public:
 			extra_npu_sem[0]->acquire();
 			printf("extra npu sem acquired\n");
 			for (int i = 0; i < Capacity; i = i + 1) {
+				printf("inner loop\n");
 				index = (i + starting) % Capacity;
 				if (npu_sem[index]->try_acquire()) {
 					starting = i + 1;
@@ -109,7 +110,7 @@ public:
 				}
 			}
 			
-		
+			printf("outer loop completed\n");
 			
 			
 			
@@ -120,6 +121,6 @@ public:
     // Releases the buffer slot back to the pool once NPU DMA read finishes.
     void on_npu_dma_complete_isr() noexcept {
         // TODO: Release the slot back to the free semaphore.
-		printf("x2");
+		printf("x2\n");
     }
 };
