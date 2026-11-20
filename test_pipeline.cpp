@@ -153,6 +153,7 @@ void test_ring_wraparound() {
 }
 
 // --- Test Case 5: Multithreaded Stress + Zero Heap Allocation ---
+/*
 void test_concurrent_stress_and_no_heap() {
     SensorNpuPipeline<4> pipe;
     g_hw.reset(&pipe, true); // Auto-trigger NPU completion ISR on submit
@@ -181,6 +182,8 @@ void test_concurrent_stress_and_no_heap() {
         pipe.on_spi_dma_complete_isr(data, 999999);
     });
 
+    
+
     spi_isr.join();
     worker.join();
 
@@ -190,6 +193,52 @@ void test_concurrent_stress_and_no_heap() {
     std::cout << "[PASS] Test 5: Concurrent stress (" << g_hw.dma_submits
               << " frames) with zero heap allocations verified.\n";
 }
+
+*/
+
+// --- Test Case 5: Multithreaded Stress + Zero Heap Allocation ---
+void test_concurrent_stress_and_no_heap() {
+    SensorNpuPipeline<4> pipe;
+    g_hw.reset(&pipe, true); // Auto-trigger NPU completion ISR on submit
+
+    constexpr int kTotalFrames = 50000;
+    std::atomic<bool> stop_worker{false};
+    std::atomic<bool> start_test{false};
+
+    std::thread worker([&]() {
+        while (!start_test.load(std::memory_order_acquire)) {}
+        while (!stop_worker.load(std::memory_order_acquire)) {
+            pipe.process_and_dispatch_to_npu();
+        }
+    });
+
+    std::thread spi_isr([&]() {
+        while (!start_test.load(std::memory_order_acquire)) {}
+        uint8_t data[4] = {1, 2, 3, 4};
+        for (int i = 1; i <= kTotalFrames; ++i) {
+            data[0] = static_cast<uint8_t>(i & 0xFF);
+            pipe.on_spi_dma_complete_isr(data, static_cast<uint64_t>(i));
+        }
+        // Wait briefly for worker to drain in-flight frames
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        stop_worker.store(true, std::memory_order_release);
+        // Send 1 wake-up frame so worker exits cleanly
+        pipe.on_spi_dma_complete_isr(data, 999999);
+    });
+
+    g_forbid_heap.store(true, std::memory_order_release);
+    start_test.store(true, std::memory_order_release);
+
+    spi_isr.join();
+    worker.join();
+
+    g_forbid_heap.store(false, std::memory_order_release);
+
+    assert(g_hw.dma_submits > 0);
+    std::cout << "[PASS] Test 5: Concurrent stress (" << g_hw.dma_submits
+              << " frames) with zero heap allocations verified.\n";
+}
+
 
 int main() {
     test_memory_alignment();
